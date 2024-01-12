@@ -26,6 +26,11 @@ async function run() {
 
         const eventCollections = client.db('volunteerDB').collection('events');
 
+        const indexKey = { eventTitle: -1, email: -1 };
+        const indexOptions = { name: "events" };
+        const result = await eventCollections.createIndex(indexKey, indexOptions);
+        // console.log(result);
+
         app.get('/events', async (req, res) => {
             const result = await eventCollections.find().sort({ entryDate: -1 }).toArray();
             res.send(result);
@@ -52,6 +57,17 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await eventCollections.findOne(query);
+            res.send(result);
+        })
+
+        app.get('/eventSearch/:text', async (req, res) => {
+            const searchText = req.params.text;
+            const result = await eventCollections.find({
+                $or: [
+                    { eventTitle: { $regex: searchText, $options: 'i' } },
+                    { email: { $regex: searchText, $options: 'i' } }
+                ]
+            }).toArray();
             res.send(result);
         })
 
