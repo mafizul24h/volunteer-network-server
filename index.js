@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -43,9 +43,38 @@ async function run() {
             const email = req.query.email;
             // console.log(email);
             const filter = { email: email };
-            const result = await eventCollections.find(filter).sort({entryDate: -1}).toArray()
+            const result = await eventCollections.find(filter).sort({ entryDate: -1 }).toArray()
             // console.log(result);
             res.send(result)
+        });
+
+        app.get('/event/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await eventCollections.findOne(query);
+            res.send(result);
+        })
+
+        app.patch('/updateEvent/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const event = req.body;
+            event.entryDate = new Date();
+            const updateEvent = {
+                $set: {
+                    ...event
+                }
+            }
+            const result = await eventCollections.updateOne(filter, updateEvent);
+            res.send(result);
+            // console.log(result);
+        })
+
+        app.delete('/event/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const result = await eventCollections.deleteOne(filter);
+            res.send(result);
         })
 
 
