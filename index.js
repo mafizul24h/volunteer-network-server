@@ -36,7 +36,16 @@ async function run() {
             event.entryDate = new Date();
             const result = await eventCollections.insertOne(event);
             res.send(result);
-            console.log(result);
+            // console.log(result);
+        })
+
+        app.get('/my-events', async (req, res) => {
+            const email = req.query.email;
+            // console.log(email);
+            const filter = { email: email };
+            const result = await eventCollections.find(filter).sort({entryDate: -1}).toArray()
+            // console.log(result);
+            res.send(result)
         })
 
 
