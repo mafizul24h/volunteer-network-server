@@ -32,6 +32,15 @@ async function run() {
         // console.log(result);
 
         app.get('/events', async (req, res) => {
+            // console.log(req.query);
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 5;
+            const skip = (page - 1) * limit;
+            const result = await eventCollections.find().skip(skip).limit(limit).sort({ entryDate: -1 }).toArray();
+            res.send(result);
+        })
+
+        app.get('/event', async (req, res) => {
             const result = await eventCollections.find().sort({ entryDate: -1 }).toArray();
             res.send(result);
         })
@@ -60,16 +69,30 @@ async function run() {
             res.send(result);
         })
 
-        app.get('/eventSearch/:text', async (req, res) => {
-            const searchText = req.params.text;
+        app.get('/eventSearch', async (req, res) => {
+            const searchText = req.query.text;
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 5;
+            const skip = (page - 1) * limit;
             const result = await eventCollections.find({
                 $or: [
                     { eventTitle: { $regex: searchText, $options: 'i' } },
                     { email: { $regex: searchText, $options: 'i' } }
                 ]
-            }).toArray();
+            }).skip(skip).limit(limit).sort({ entryDate: -1 }).toArray();
             res.send(result);
         })
+
+        // app.get('/eventSearch/:text', async (req, res) => {
+        //     const searchText = req.params.text;
+        //     const result = await eventCollections.find({
+        //         $or: [
+        //             { eventTitle: { $regex: searchText, $options: 'i' } },
+        //             { email: { $regex: searchText, $options: 'i' } }
+        //         ]
+        //     }).toArray();
+        //     res.send(result);
+        // })
 
         app.patch('/updateEvent/:id', async (req, res) => {
             const id = req.params.id;
@@ -91,6 +114,12 @@ async function run() {
             const filter = { _id: new ObjectId(id) };
             const result = await eventCollections.deleteOne(filter);
             res.send(result);
+        })
+
+        // Pagination 
+        app.get('/totalEvents', async (req, res) => {
+            const result = await eventCollections.estimatedDocumentCount();
+            res.send({ totalEvents: result });
         })
 
 
