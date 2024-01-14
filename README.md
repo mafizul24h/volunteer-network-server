@@ -17,7 +17,8 @@ Welcome to Volunteer Network, a web platform designed to facilitate event creati
 - **Client Site GitHub Code:** [Client GitHub Repository](https://github.com/mafizul24h/voluntary-network.git)
 - **Server Site GitHub Code:** [Server GitHub Repository](https://github.com/mafizul24h/volunteer-network-server.git)
 - **Vercel Server Site:** [Vercel Deployment](https://volunteer-network-server-gamma.vercel.app/)
-  - Note: The server site code is hosted on Vercel. If you encounter data loading issues or the site does not load properly, please reload the live site to retrieve the data.
+
+  - Note: The server site code is hosted on Vercel. If you encounter data loading issues or the site does not load properly, please reload the live site 2/3 times to retrieve the data.
 
 Feel free to explore and contribute to make Volunteer Network even more impactful!
 
